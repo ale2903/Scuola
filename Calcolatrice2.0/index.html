@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Calcolatrice2.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0e0e0;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        h1 {
+            color: red;
+            margin-bottom: 5px;
+        }
+
+        h3 {
+            color: black;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .calcolatrice {
+            background-color: #f3f3f3;
+            border: 1px solid #999;
+            padding: 15px;
+            width: 280px;
+            margin: auto;
+        }
+
+        #display {
+            width: 92%;
+            height: 50px;
+            font-size: 26px;
+            text-align: right;
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: white;
+            border: 1px solid #ccc;
+        }
+
+        .tastiera {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        button {
+            height: 45px;
+            font-size: 18px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .operatore {
+            background-color: #eaeaea;
+        }
+
+        .uguale {
+            background-color: #0067c0;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Calcolatrice2.0</h1>
+<h3>Fatto da Wang Yize</h3>
+
+<div class="calcolatrice">
+    <input type="text" id="display" value="0" readonly>
+
+    <div class="tastiera">
+        <!-- Riga 1: Parentesi e tasti di cancellazione -->
+        <button class="operatore" onclick="aggiungiCarattere('(')">(</button>
+        <button class="operatore" onclick="aggiungiCarattere(')')">)</button>
+        <button class="operatore" onclick="cancellaTutto()">C</button>
+        <button class="operatore" onclick="cancellaUltimo()">⌫</button>
+
+        <!-- Riga 2: Funzioni Math -->
+        <button class="operatore" onclick="calcolaMath('sqrt')">√x</button>
+        <button class="operatore" onclick="calcolaMath('pow')">x²</button>
+        <button class="operatore" onclick="inserisciPi()">π</button>
+        <button class="operatore" onclick="calcolaMath('abs')">|x|</button>
+
+        <!-- Riga 3: Trigonometria e Logaritmi -->
+        <button class="operatore" onclick="calcolaMath('sin')">sin</button>
+        <button class="operatore" onclick="calcolaMath('cos')">cos</button>
+        <button class="operatore" onclick="calcolaMath('ln')">ln</button>
+        <button class="operatore" onclick="calcolaMath('log')">log</button>
+
+        <!-- Righe numeri e operazioni base -->
+        <button onclick="aggiungiCarattere('7')">7</button>
+        <button onclick="aggiungiCarattere('8')">8</button>
+        <button onclick="aggiungiCarattere('9')">9</button>
+        <button class="operatore" onclick="aggiungiCarattere('/')">÷</button>
+
+        <button onclick="aggiungiCarattere('4')">4</button>
+        <button onclick="aggiungiCarattere('5')">5</button>
+        <button onclick="aggiungiCarattere('6')">6</button>
+        <button class="operatore" onclick="aggiungiCarattere('*')">×</button>
+
+        <button onclick="aggiungiCarattere('1')">1</button>
+        <button onclick="aggiungiCarattere('2')">2</button>
+        <button onclick="aggiungiCarattere('3')">3</button>
+        <button class="operatore" onclick="aggiungiCarattere('-')">-</button>
+
+        <button onclick="aggiungiCarattere('0')">0</button>
+        <button onclick="aggiungiCarattere('.')">.</button>
+        <button class="uguale" onclick="calcolaRisultato()">=</button>
+        <button class="operatore" onclick="aggiungiCarattere('+')">+</button>
+    </div>
+</div>
+
+<script>
+    let display = document.getElementById("display");
+
+    function aggiungiCarattere(carattere) {
+        if (display.value === "0" || display.value === "Errore") {
+            display.value = carattere;
+        } else {
+            display.value += carattere;
+        }
+    }
+
+    function cancellaTutto() {
+        display.value = "0";
+    }
+
+    function cancellaUltimo() {
+        display.value = display.value.slice(0, -1);
+        if (display.value === "") {
+            display.value = "0";
+        }
+    }
+
+    function calcolaRisultato() {
+        try {
+            let risultato = eval(display.value);
+            if (!isFinite(risultato)) {
+                display.value = "Errore";
+            } else {
+                display.value = Math.round(risultato * 100000) / 100000;
+            }
+        } catch (errore) {
+            display.value = "Errore";
+        }
+    }
+
+    function calcolaMath(operazione) {
+        let numero = parseFloat(display.value);
+
+        if (isNaN(numero)) {
+            display.value = "Errore";
+            return;
+        }
+
+        switch (operazione) {
+            case "sqrt":
+                display.value = (numero < 0) ? "Errore" : Math.sqrt(numero);
+                break;
+
+            case "pow":
+                display.value = Math.pow(numero, 2);
+                break;
+
+            case "sin":
+                display.value = Math.sin(numero);
+                break;
+
+            case "cos":
+                display.value = Math.cos(numero);
+                break;
+
+            case "abs":
+                display.value = Math.abs(numero);
+                break;
+
+            case "ln":
+                display.value = (numero <= 0) ? "Errore" : Math.log(numero);
+                break;
+
+            case "log":
+                display.value = (numero <= 0) ? "Errore" : Math.log10(numero);
+                break;
+
+            default:
+                display.value = "Errore";
+        }
+    }
+
+    function inserisciPi() {
+        if (display.value === "0") {
+            display.value = Math.PI.toFixed(4);
+        } else {
+            display.value += Math.PI.toFixed(4);
+        }
+    }
+</script>
+
+</body>
+</html>

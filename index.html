@@ -1,146 +1,169 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolatrice - Wang Yize</title>
-
+    <title>Calcolatrice 2.0</title>
     <style>
         body {
-            font-family: Arial;
-            text-align: left;
-            margin-top: 50px;
+            font-family: Arial, sans-serif;
+            background-color: #e0e0e0;
+            text-align: center;
+            margin-top: 40px;
         }
 
-        input, button, select {
-            padding: 10px;
-            font-size: 16px;
+        .calcolatrice {
+            background-color: #f3f3f3;
+            border: 1px solid #999;
+            padding: 15px;
+            width: 280px;
+            margin: auto; /* Centra la calcolatrice nella pagina */
         }
 
-        #risultato {
-            margin-top: 20px;
-            font-size: 20px;
+        #display {
+            width: 92%;
+            height: 50px;
+            font-size: 26px;
+            text-align: right;
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: white;
+            border: 1px solid #ccc;
+        }
+
+        .tastiera {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        button {
+            height: 45px;
+            font-size: 18px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .operatore {
+            background-color: #eaeaea;
+        }
+
+        .uguale {
+            background-color: #0067c0;
+            color: white;
         }
     </style>
 </head>
-
 <body>
 
-    <h1>Calcolatrice</h1>
-    <h3>Fatto da Wang Yize</h3>
+<div class="calcolatrice">
+    <input type="text" id="display" value="0" readonly>
 
-    <input type="number" id="numero" placeholder="Inserisci un numero">
+    <div class="tastiera">
+        <button class="operatore" onclick="calcolaMath('sqrt')">√x</button>
+        <button class="operatore" onclick="calcolaMath('pow')">x²</button>
+        <button class="operatore" onclick="inserisciPi()">π</button>
+        <button class="operatore" onclick="cancellaTutto()">C</button>
 
-    <select id="operatore" onchange="scegliOperatore()">
-        <option value="">Seleziona operatore</option>
-        <option value="+">+</option>
-        <option value="-">-</option>
-        <option value="*">*</option>
-        <option value="/">/</option>
-    </select>
+        <button class="operatore" onclick="calcolaMath('sin')">sin</button>
+        <button class="operatore" onclick="calcolaMath('cos')">cos</button>
+        <button class="operatore" onclick="calcolaMath('abs')">|x|</button>
+        <button class="operatore" onclick="cancellaUltimo()">⌫</button>
 
-    <button onclick="calcola()">Calcola</button>
-    <button onclick="reset()">Reset</button>
+        <button onclick="aggiungiCarattere('7')">7</button>
+        <button onclick="aggiungiCarattere('8')">8</button>
+        <button onclick="aggiungiCarattere('9')">9</button>
+        <button class="operatore" onclick="aggiungiCarattere('/')">÷</button>
 
-    <div id="risultato"></div>
+        <button onclick="aggiungiCarattere('4')">4</button>
+        <button onclick="aggiungiCarattere('5')">5</button>
+        <button onclick="aggiungiCarattere('6')">6</button>
+        <button class="operatore" onclick="aggiungiCarattere('*')">×</button>
 
-    <script>
+        <button onclick="aggiungiCarattere('1')">1</button>
+        <button onclick="aggiungiCarattere('2')">2</button>
+        <button onclick="aggiungiCarattere('3')">3</button>
+        <button class="operatore" onclick="aggiungiCarattere('-')">-</button>
 
-        let numeri = [];
-        let operatori = [];
+        <button onclick="aggiungiCarattere('0')">0</button>
+        <button onclick="aggiungiCarattere('.')">.</button>
+        <button class="uguale" onclick="calcolaRisultato()">=</button>
+        <button class="operatore" onclick="aggiungiCarattere('+')">+</button>
+    </div>
+</div>
 
-        function scegliOperatore() {
+<script>
+    let display = document.getElementById("display");
 
-            let numero = document.getElementById("numero").value;
+    function aggiungiCarattere(carattere) {
+        if (display.value === "0" || display.value === "Errore") {
+            display.value = carattere;
+        } else {
+            display.value += carattere;
+        }
+    }
 
-            if (numero == "") {
+    function cancellaTutto() {
+        display.value = "0";
+    }
+
+    function cancellaUltimo() {
+        display.value = display.value.slice(0, -1);
+        if (display.value === "") {
+            display.value = "0";
+        }
+    }
+
+    function calcolaRisultato() {
+        try {
+            let risultato = eval(display.value);
+            if (!isFinite(risultato)) {
+                display.value = "Errore";
+            } else {
+                display.value = Math.round(risultato * 100000) / 100000;
+            }
+        } catch (errore) {
+            display.value = "Errore";
+        }
+    }
+
+    function calcolaMath(operazione) {
+        let numero = parseFloat(display.value);
+
+        if (isNaN(numero)) {
+            display.value = "Errore";
+            return;
+        }
+
+        if (operazione === "sqrt") {
+            if (numero < 0) {
+                display.value = "Errore";
                 return;
             }
-
-            numeri[numeri.length] = Number(numero);
-
-            operatori[operatori.length] = document.getElementById("operatore").value;
-
-            document.getElementById("numero").value = "";
-            document.getElementById("numero").placeholder = "Inserisci un altro numero";
-
-            document.getElementById("operatore").value = "";
-
+            display.value = Math.sqrt(numero);
+        } 
+        else if (operazione === "pow") {
+            display.value = Math.pow(numero, 2);
+        } 
+        else if (operazione === "sin") {
+            display.value = Math.sin(numero);
+        } 
+        else if (operazione === "cos") {
+            display.value = Math.cos(numero);
+        } 
+        else if (operazione === "abs") {
+            display.value = Math.abs(numero);
         }
+    }
 
-        function calcola() {
-
-            let numero = document.getElementById("numero").value;
-
-            if (numero == "" || numeri.length == 0) {
-                return;
-            }
-
-            numeri[numeri.length] = Number(numero);
-
-            // Prima Moltiplicazioni e divisioni
-            for (let i = 0; i < operatori.length; i++) {
-
-                if (operatori[i] == "*") {
-
-                    numeri[i + 1] = numeri[i] * numeri[i + 1];
-
-                    numeri[i] = 0;
-                    operatori[i] = "+";
-
-                }
-
-                else if (operatori[i] == "/") {
-
-                    numeri[i + 1] = numeri[i] / numeri[i + 1];
-
-                    numeri[i] = 0;
-                    operatori[i] = "+";
-
-                }
-
-            }
-
-            // Poi Addizioni e sottrazioni
-            let risultato = numeri[0];
-
-            for (let i = 0; i < operatori.length; i++) {
-
-                switch (operatori[i]) {
-
-                    case "+":
-                        risultato = risultato + numeri[i + 1];
-                        break;
-
-                    case "-":
-                        risultato = risultato - numeri[i + 1];
-                        break;
-
-                }
-
-            }
-
-            document.getElementById("risultato").innerHTML =
-            "Risultato: " + risultato;
-
+    function inserisciPi() {
+        if (display.value === "0") {
+            display.value = Math.PI.toFixed(4);
+        } else {
+            display.value += Math.PI.toFixed(4);
         }
-
-        function reset() {
-
-            numeri = [];
-            operatori = [];
-
-            document.getElementById("numero").value = "";
-            document.getElementById("numero").placeholder = "Inserisci un numero";
-
-            document.getElementById("operatore").value = "";
-
-            document.getElementById("risultato").innerHTML = "";
-
-        }
-
-    </script>
+    }
+</script>
 
 </body>
 </html>
